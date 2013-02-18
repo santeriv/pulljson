@@ -1,0 +1,55 @@
+<div id="howto">
+	<h1>{{title}}</h1>
+
+	<div>
+		<p>Feel free to use it for yourself, for good not evil!</p>
+	</div>
+	<h3>Example queries which returns valid jsonp:</h3>
+	<pre>
+	http://www.pulljson.com/jquery?site=jquery.com&selector=find('a').children()&callback=myjsonpcallback
+	</pre>
+	<h3>Usage example of API</h3>
+	<pre>
+	$.ajax(
+	{
+		dataType:'jsonp',
+		url:"http://www.pulljson.com/jquery?site=www.jquery.com&selector=find('a img')&callback=?",
+		success:function(data) {
+			var items = [];
+			/*Puts into list found linksimages' alt text from jquery.com site*/
+			$.each(data.results, function(key, val) {
+				/* val.text refers to content of tags */
+				items.push('&lt;li id="' + key + '"&gt;' + val.attributes.alt + '&lt;/li&gt;');
+			});
+			$('&lt;ul/&gt;', {
+				'class': 'my-new-list',
+				html: items.join('')
+			}).appendTo('body');
+		}
+	});
+	</pre>
+	<input type="button" id="examplerun1" value="Run above example!"/>
+	<div class="mainContentArea">
+		<div style="position:absolute;width:25%">
+
+		</div>
+	</div>
+</div><!-- #howto -->
+<div id="contact">
+	<h1>contact info</h1>
+	<div style="position:relative;float:left;width:50%">
+		<p>
+			{{! iterate contact details }}
+			<ul class="contact_list">
+			{{#each contactdetails}}
+				<li>
+					<i class="{{icon}}"></i>
+<a href="http://twitter.com/{{twitter}}" target="_blank">
+@{{twitter}}
+</a>
+				</li>
+			{{/each}}
+			</ul>
+		</p>
+	</div>
+</div>

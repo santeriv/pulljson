@@ -1,0 +1,24 @@
+{
+  "name": "apify",
+  "subdomain": "santeriv.apify",
+  "domains": [
+    "pulljson.com",
+    "www.pulljson.com"
+  ],
+  "version": "0.0.1-13",
+  "private": true,
+  "scripts": {
+    "start": "app.js"
+  },
+  "dependencies": {
+    "express": "3.0.2",
+    "hbs": "2.0.1",
+    "less-middleware": "0.1.9",
+    "jquery": "1.8.3",
+    "follow-redirects": "0.0.3",
+    "sanitizer": "0.0.15"
+  },
+  "engines": {
+    "node": "0.8.x"
+  }
+}
