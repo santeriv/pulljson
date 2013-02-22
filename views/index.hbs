@@ -1,15 +1,14 @@
 <div id="howto">
-	<h1>{{title}}</h1>
+	<h2>{{title}}</h2>
 
 	<div>
 		<p>Feel free to use it for yourself, for good not evil!</p>
 	</div>
 	<h3>Example queries which returns valid jsonp:</h3>
-	<pre>
-	http://www.pulljson.com/jquery?site=jquery.com&selector=find('a').children()&callback=myjsonpcallback
-	</pre>
+	<pre>http://www.pulljson.com/jquery?site=jquery.com&selector=find('a').children()&callback=myjsonpcallback</pre>
 	<h3>Usage example of API</h3>
 	<pre>
+	$('#demo-output').show();
 	$.ajax(
 	{
 		dataType:'jsonp',
@@ -24,32 +23,90 @@
 			$('&lt;ul/&gt;', {
 				'class': 'my-new-list',
 				html: items.join('')
-			}).appendTo('body');
+			}).appendTo('#demo-output');
+			$('#demo-output-loader').hide();
 		}
 	});
 	</pre>
 	<input type="button" id="examplerun1" value="Run above example!"/>
-	<div class="mainContentArea">
-		<div style="position:absolute;width:25%">
-
+	<div id="demo-output" class="well" style="display:none">
+		<div id="demo-output-loader">
+			<i class="icon-spinner icon-spin"></i>Loading results
 		</div>
+		<br />
 	</div>
 </div><!-- #howto -->
+<div id="demo">
+	<h2>demo</h2>
+	<ul style="list-style:none">
+		<li><i class="icon-mobile-phone icon-large"></i>/<i class="icon-tablet icon-large"></i><a href="http://jqm-boilerplate-site.orionhub.org:8080/lists.html" target="_blank">jQueryMobile Boilerplate running in my orionhub site</a></li>
+		<li><i class="icon-github icon-large"></i><a href="https://github.com/santeriv/jQuery-Mobile-Boilerplate/blob/master/js/application.js" target="_blank">source of demo</a></li>
+	</ul>
+</div><!-- #demo -->
+<div id="about">
+	<h2>about</h2>
+	<pre class="well well-small">
+	<span class="label label-inverse">In brief</span>
+	--------
+	This service is done mainly for mobile/tablet needs in mind to access web data via jsonp.
+
+	If you are just wondering how to access a nice json api via mobile I'd recommend <a href="https://jsonp.nodejitsu.com" target="_blank"><i class="icon-external-link"></i>https://jsonp.nodejitsu.com</a>
+	If you need full power of (rich) javascript + actual event handling possibilties I'd recommend checking <a href="http://nrabinowitz.github.com/pjscrape/" target="_blank"><i class="icon-external-link"></i>pjscrape</a>
+	If you need reporting features(scheduled emails and diff reports) I'd recommend <a href="http://femtoo.com" target="_blank"><i class="icon-external-link"></i>femtoo.com</a> which uses cquery.com
+
+	<span class="label label-important">Limitations</span>
+	-----------
+	- There will not be - almost likely - CORS or jsonpi (=JSONP with POST) API support
+	- There will be hardly any navigation and interaction (read as javascript) support with service in web pages
+	- This service and site is one developer's hobby project
+	- Thus, the service and this site might be offline every now and then.
+	
+	<span class="label label-default">Other services</span>
+	--------------
+	Certainly there are other tools besides this in the wild which operate similarly
+	and have affected also creating this tool by myself with node.js.
+	
+	To name some of those tools are
+	| name                 | query methods                  | online?    |
+	----------------------------------------------------------------------
+	* anyorigin.com        - none, one big content property - online
+	* yahoo pipes          - xpath                          - online
+	* pjscrape (phantomjs) - jquery                         - standalone
+	* google spreadsheet   - xpath                          - online
+	* cquery.com           - css selectors                  - online
+	
+	I'd see this service resembles most closely cquery.
+	Yet, anyorigin might seem very similar also at first look but there is slight difference how 'jquery' is used. 
+	</pre>
+	
+	<h3>Building blocks of this site</h3>
+	
+	Will be added soon.<ul style="list-style:none">
+			{{#each aboutlinks}}
+				<li>
+					<i class="{{icon}} icon-large"></i>
+<a href="{{link}}" target="_blank">
+{{description}}
+</a>
+				</li>
+			{{/each}}
+	</ul>
+</div><!-- #about -->
 <div id="contact">
-	<h1>contact info</h1>
-	<div style="position:relative;float:left;width:50%">
+	<h2>contact info</h2>
+	<div>
 		<p>
 			{{! iterate contact details }}
-			<ul class="contact_list">
+			<ul style="list-style:none" class="contact_list">
 			{{#each contactdetails}}
 				<li>
-					<i class="{{icon}}"></i>
+					<i class="{{icon}} icon-large"></i>
 <a href="http://twitter.com/{{twitter}}" target="_blank">
 @{{twitter}}
 </a>
 				</li>
 			{{/each}}
-			</ul>
+				</ul>
 		</p>
 	</div>
-</div>
+</div><!-- #contact -->

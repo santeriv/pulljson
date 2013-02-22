@@ -24,6 +24,17 @@
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
+	<script type="text/javascript">
+/* <![CDATA[ */
+    (function() {
+        var s = document.createElement('script'), t = document.getElementsByTagName('script')[0];
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = 'http://api.flattr.com/js/0.6/load.js?mode=auto';
+        t.parentNode.insertBefore(s, t);
+    })();
+/* ]]> */</script>
+	
     <!-- Fav and touch icons -->
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/ico/apple-touch-icon-114-precomposed.png">
@@ -45,9 +56,10 @@
           <a class="brand" href="#">pulljson.com</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="active"><a href="#howto">How to? <i class="icon-lightbulb" style="font-size: 40px;"></i></a></li>
-              <li><a href="#contact">Contact <i class="icon-twitter" style="font-size: 40px;"></i></a></li>
-			  <li><a href="http://jqm-boilerplate-site.orionhub.org:8080/lists.html" target="_blank">Demo <i class="icon-mobile-phone" style="font-size: 40px;"></i></a>
+              <li class="active"><a href="#howto">How to? <i class="icon-lightbulb" style="font-size: 20px;"></i></a></li>
+			  <li><a href="#demo">Demo <i class="icon-mobile-phone" style="font-size: 20px;"></i>/<i class="icon-tablet" style="font-size: 20px;"></i></a>
+			  <li><a href="#about">About <i class="icon-umbrella" style="font-size: 20px;"></i></a></li>
+              <li><a href="#contact">Contact <i class="icon-twitter" style="font-size: 20px;"></i></a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -55,7 +67,14 @@
     </div>
     <div id="content">
       <div class="container">
-
+		<br />
+		<a class="FlattrButton pull-right" style="display:none;" rev="flattr;button:compact;" href="http://pulljson.com"></a>
+		<noscript>
+			<a href="http://flattr.com/thing/1144455/pull-html-json-with-jquery-selector-like-syntax-from-any-site" target="_blank">
+				<img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" />
+			</a>
+		</noscript>
+	  
         {{{body}}}
 
       </div>
@@ -68,6 +87,7 @@
 	<script>
 	$(document).ready(function(){
 		$('#examplerun1').click(function(){
+		$('#demo-output').show();
 		$(this).attr('disabled','disabled');
 			$.ajax(
 			{
@@ -83,7 +103,8 @@
 					  $('<ul/>', {
 						'class': 'my-new-list',
 						html: items.join('')
-					  }).appendTo('body');
+					  }).appendTo('#demo-output');
+					  $('#demo-output-loader').hide();
 				}
 			});
 		});
