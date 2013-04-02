@@ -45,39 +45,51 @@
 </div><!-- #demo -->
 <div id="about">
 	<h2>about</h2>
-	<pre class="well well-small">
-	<span class="label label-inverse">In brief</span>
-	--------
-	This service is done mainly for mobile/tablet needs in mind to access web data via jsonp.
-
-	If you are just wondering how to access a nice json api via mobile I'd recommend <a href="https://jsonp.nodejitsu.com" target="_blank"><i class="icon-external-link"></i>https://jsonp.nodejitsu.com</a>
-	If you need full power of (rich) javascript + actual event handling possibilties I'd recommend checking <a href="http://nrabinowitz.github.com/pjscrape/" target="_blank"><i class="icon-external-link"></i>pjscrape</a>
-	If you need reporting features(scheduled emails and diff reports) I'd recommend <a href="http://femtoo.com" target="_blank"><i class="icon-external-link"></i>femtoo.com</a> which uses cquery.com
-
-	<span class="label label-important">Limitations</span>
-	-----------
-	- There will not be - almost likely - CORS or jsonpi (=JSONP with POST) API support
-	- There will be hardly any navigation and interaction (read as javascript) support with service in web pages
-	- This service and site is one developer's hobby project
-	- Thus, the service and this site might be offline every now and then.
-	
-	<span class="label label-default">Other services</span>
-	--------------
-	Certainly there are other tools besides this in the wild which operate similarly
-	and have affected also creating this tool by myself with node.js.
-	
-	To name some of those tools are
-	| name                 | query methods                  | online?    |
-	----------------------------------------------------------------------
-	* anyorigin.com        - none, one big content property - online
-	* yahoo pipes          - xpath                          - online
-	* pjscrape (phantomjs) - jquery                         - standalone
-	* google spreadsheet   - xpath                          - online
-	* cquery.com           - css selectors                  - online
-	
-	I'd see this service resembles most closely cquery.
-	Yet, anyorigin might seem very similar also at first look but there is slight difference how 'jquery' is used. 
-	</pre>
+	<div class="well well-small">
+		<span class="label label-inverse">In brief</span>
+		<div>
+		This service is done mainly for mobile/tablet needs in mind to access web data via jsonp.
+			<br />
+		</div>
+		<div>
+			<ul style="list-style:none">
+				<li>If you are just wondering how to access a nice json api via mobile I'd recommend <a href="https://jsonp.nodejitsu.com" target="_blank"><i class="icon-external-link"></i>https://jsonp.nodejitsu.com</a></li>
+				<li>If you need full power of (rich) javascript + actual event handling possibilties I'd recommend checking <a href="http://nrabinowitz.github.com/pjscrape/" target="_blank"><i class="icon-external-link"></i>pjscrape</a></li>
+				<li>If you need reporting features(scheduled emails and diff reports) I'd recommend <a href="http://femtoo.com" target="_blank"><i class="icon-external-link"></i>femtoo.com</a> which uses cquery.com</li>
+			</ul>
+		</div>
+		<hr />
+		<span class="label label-important">Limitations</span>
+		<div>
+			<ul style="list-style:none">
+				<li>There will not be - almost likely - CORS or jsonpi (=JSONP with POST) API support</li>
+				<li>There will be hardly any navigation and interaction (read as javascript) support with service in web pages</li>
+				<li>This service and site is one developer's hobby project</li>
+				<li>Thus, the service and this site might be offline every now and then.</li>
+			</ul>
+		</div>
+		<hr />
+		<span class="label label-default">Other services</span>
+		<div>
+			Certainly there are other tools besides this in the wild which operate similarly
+			and have affected also creating this tool by myself with node.js.
+			<br /><br />
+			
+			To name some of those tools are
+			<br />
+			<table border="1">
+				<th>name</th><th>query methods</th><th>online</th>
+				<tr><td>anyorigin.com</td><td>none, one big content property</td><td>online</td><tr>
+				<tr><td>yahoo pipes</td><td>xpath</td><td>online</td><tr>
+				<tr><td>pjscrape (phantomjs)</td><td>jquery</td><td>standalone</td><tr>
+				<tr><td>google spreadsheet</td><td>xpath</td><td>online</td><tr>
+				<tr><td>cquery.com</td><td>css selectors</td><td>online</td></tr>
+			</table>
+			<br />
+			I'd see this service resembles most closely cquery.
+			Yet, anyorigin might seem very similar also at first look but there are differences how 'jquery' is used. 
+		</div>
+	</div>
 	
 	<h3>Building blocks of this site</h3>
 	
