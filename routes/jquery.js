@@ -1,6 +1,7 @@
 jquery = require('jquery');
 var url = require('url');
 var http = require('follow-redirects').http
+var https = require('follow-redirects').https
 var sanitizer = require('sanitizer');
 /*
 TODO: enable safe vm calls
@@ -18,65 +19,81 @@ exports.fetch = function(req, res){
 	returnvalue = [];
 	jqueryselector = '';
 	var callbackfunction = '';
-		
+	var urlEncoded = encodeURIComponent(req.url);
+	console.log('0:urlEncoded='+urlEncoded);
 	var queryParams = url.parse(req.url,true).query;
-	console.log(queryParams);
-	if(queryParams === undefined || queryParams.site === undefined){
+	console.log('1:queryParams='+queryParams);
+	if(queryParams.site == null){
 		res.redirect('/');
 	} 
 	/*{ site: 'jquery.com', selector: '(\'title\')', callback: '?' }*/
 	var sitepath = url.parse(queryParams.site,true).path;
-	console.log('sitepath (original)='+sitepath);
+	console.log('2:sitepath (original)='+sitepath);
 	var sitehost = url.parse(queryParams.site,true).host;
-	console.log('sitehost (original)='+sitehost);
+	console.log('3:sitehost (original)='+sitehost);
 	
-	// code.fi/haku instead of http://code.fi/haku
-	if(sitehost === undefined && sitepath !== undefined) {
+	/*
+     *	jquerymobile.com/demos/1.2.1/docs/pages/multipage-template.html
+   	 *  instead of http://code.fi/haku
+	 */
+	if(sitehost == null && sitepath != null) {
 		sitehost = sitepath.split('/')[0];
-		//just www.code.fi
+		/*just www.code.fi */
 		if(sitepath.split('/')[1] === undefined) {
-			sitepath = undefined;
+			sitepath = null;
 		}
 		else {
-			sitepath = '/' + sitepath.split('/')[1] + '/';
+			sitepath = sitepath.split(sitehost)[1];
 		}
 	}
-	//iterate all possible sitepath variables
+	/*iterate all possible sitepath variables*/
+	var paramPairNumber = 0;
 	Object.keys(queryParams).forEach(function(param) {
-		var paramstr = ''+param;/*cast property to string*/
+	    /*cast property to string*/
+		var paramstr = ''+param;
 		if(paramstr !== 'site' 
 			&& paramstr !== 'selector'
 			&& paramstr !== 'callback'
 			&& paramstr !== '_') {
-			//param,value
-			console.log(param, queryParams[param]);
-			//add param and value to sitepath
-			sitepath = sitepath + '&'+paramstr+'='+queryParams[param];
+			/*param,value*/
+			paramPairNumber++;
+			var pair='&'+paramstr+'='+queryParams[param];
+			console.log('4.'+paramPairNumber+': '+ pair);
+			/*add param and value to sitepath*/
+			sitepath = sitepath + pair;
 		}
 	});	
-	console.log('sitepath (final,parsed)='+sitepath);
-	console.log('sitehost (final,parsed)'+sitehost);
+    /*final param values before server side execute*/
+	sitehost = sitehost || 'jquery.com';
+	/*TODO: WOT url check*/
+	sitehost = sanitizer.escape(sitehost);
+	sitepath = sitepath || '/';
+	/*TODO: how to sanitize without killing &param=&param2=*/
+	/*sitepath = sanitizer.escape(sitepath);*/
+	console.log('5:sitepath (final,parsed)='+sitepath);
+	console.log('6:sitehost (final,parsed)='+sitehost);
+
 	callbackfunction = queryParams.callback;
-	console.log('callbackfunction '+callbackfunction);
+	console.log('7:callbackfunction '+callbackfunction);
 
 	jqueryselector = queryParams.selector;
-	console.log('jqueryselector '+jqueryselector);
-	sitehost = sitehost || 'jquery.com';
-	sitepath = sitepath || '/';
-	var options = {
-		host: sanitizer.escape(sitehost),
-		port: 80,
-		path: sanitizer.escape(sitepath)
-	};
 	jqueryselector = sanitizer.sanitize(jqueryselector);
+	console.log('8:jqueryselector '+jqueryselector);
+
+	var options = {
+		host: sitehost,
+		port: 80,
+		path: sitepath
+	};
+	/*TODO: use https and port 443 if specified*/
 	http.get(options, function(htmlresponse) {
 		htmlresponse.on('data', function(data) {
 			html += data;
 		}).on('end', function() {
-			// webpage data has loaded
+			/* webpage data has loaded */
 			setTimeout(function(){
 				if(jqueryselector !== undefined) {
-					console.log('creating jquery');
+					console.log('10:executing server jquery');
 					var queryresultnodes = [];
 					var jquerycall = 'jquery(html).'+jqueryselector+'.each(function(index,data){returnvalue.push(data);})';
 					var jqueryscript = vm.createScript(jquerycall, 'myjquery.vm');
@@ -94,15 +111,37 @@ exports.fetch = function(req, res){
 	});
 };
 
+/*Modified from https://gist.github.com/miohtama/1570295*/
+function parseHashArgs(aURL) {
+ 
+	/*aURL = aURL || window.location.href;*/
+	
+	var vars = {};
+	var hashes = aURL.slice(aURL.indexOf('#') + 1).split('&');
+ 
+    for(var i = 0; i < hashes.length; i++) {
+       var hash = hashes[i].split('=');
+      
+       if(hash.length > 1) {
+    	   vars[hash[0]] = hash[1];
+       } else {
+     	  vars[hash[0]] = null;
+       }      
+    }
+ 
+    return vars;
+}
+
+/*Modified from https://gist.github.com/hugeen/4662065 */
 function xmlToJson(xml) {
 	
-	// Create the return object
+	/* Create the return object */
 	var obj = {};
  
-	// console.log(xml.nodeType, xml.nodeName );
+	/* console.log(xml.nodeType, xml.nodeName ); */
 	
-	if (xml.nodeType == 1) { // element
-		// do attributes
+	if (xml.nodeType == 1) { /* element */
+		/* do attributes */
 		if (xml.attributes.length > 0) {
 		obj["attributes"] = {};
 			for (var j = 0; j < xml.attributes.length; j++) {
@@ -111,15 +150,15 @@ function xmlToJson(xml) {
 			}
 		}
 	} 
-	else if (xml.nodeType == 4) { // cdata section
+	else if (xml.nodeType == 4) { /* cdata section */
 		obj = xml.nodeValue
 	}
 
-	else if (xml.nodeType == 3) { // text section
+	else if (xml.nodeType == 3) { /* text section */
 		obj = xml.nodeValue
 	}
 
-	// do children
+	/* do children */
 	if (xml.hasChildNodes()) {
 		for(var i = 0; i < xml.childNodes.length; i++) {
 			var item = xml.childNodes.item(i);
