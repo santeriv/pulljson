@@ -23,7 +23,7 @@ exports.fetch = function(req, res){
 	console.log('0:urlEncoded='+urlEncoded);
 	var queryParams = url.parse(req.url,true).query;
 	console.log('1:queryParams='+queryParams);
-	if(queryParams.site == null){
+	if(queryParams === undefined || queryParams.site === undefined || queryParams.site == null){
 		res.redirect('/');
 	} 
 	/*{ site: 'jquery.com', selector: '(\'title\')', callback: '?' }*/
@@ -36,7 +36,7 @@ exports.fetch = function(req, res){
      *	jquerymobile.com/demos/1.2.1/docs/pages/multipage-template.html
    	 *  instead of http://code.fi/haku
 	 */
-	if(sitehost == null && sitepath != null) {
+	if((sitehost === undefined && sitepath !== undefined) || (sitehost == null && sitepath != null)) {
 		sitehost = sitepath.split('/')[0];
 		/*just www.code.fi */
 		if(sitepath.split('/')[1] === undefined) {
