@@ -3,21 +3,20 @@ var url = require('url');
 var http = require('follow-redirects').http
 var https = require('follow-redirects').https
 var sanitizer = require('sanitizer');
-/*
-TODO: enable safe vm calls
-http://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
-*/
 var vm = require('vm');
+var domain = require('domain');
 
 /*
  * GET jquery 
  */
 
 exports.fetch = function(req, res){
-
 	html = '';
+	onerrorAddress = req.connection.remoteAddress;
+	jqerrorString = null;
 	returnvalue = [];
 	jqueryselector = '';
+	jqueryforcetext = 'false';
 	var callbackfunction = '';
 	var urlEncoded = encodeURIComponent(req.url);
 	console.log('0:urlEncoded='+urlEncoded);
@@ -31,7 +30,6 @@ exports.fetch = function(req, res){
 	console.log('2:sitepath (original)='+sitepath);
 	var sitehost = url.parse(queryParams.site,true).host;
 	console.log('3:sitehost (original)='+sitehost);
-	
 	/*
      *	jquerymobile.com/demos/1.2.1/docs/pages/multipage-template.html
    	 *  instead of http://code.fi/haku
@@ -54,6 +52,8 @@ exports.fetch = function(req, res){
 		if(paramstr !== 'site' 
 			&& paramstr !== 'selector'
 			&& paramstr !== 'callback'
+			&& paramstr !== 'forcetext'
+			&& paramstr !== 'forceText'
 			&& paramstr !== '_') {
 			/*param,value*/
 			paramPairNumber++;
@@ -78,8 +78,14 @@ exports.fetch = function(req, res){
 
 	jqueryselector = queryParams.selector;
 	jqueryselector = sanitizer.sanitize(jqueryselector);
+	
 	console.log('8:jqueryselector '+jqueryselector);
 
+	jqueryforcetext = queryParams.forceText || queryParams.forcetext || 'false';
+	jqueryforcetext = sanitizer.sanitize(jqueryforcetext);
+
+	console.log('9:jqueryforcetext '+jqueryforcetext);
+	
 	var options = {
 		host: sitehost,
 		port: 80,
@@ -87,6 +93,7 @@ exports.fetch = function(req, res){
 	};
 	/*TODO: use https and port 443 if specified*/
 	http.get(options, function(htmlresponse) {
+	    htmlresponse.setEncoding('binary');
 		htmlresponse.on('data', function(data) {
 			html += data;
 		}).on('end', function() {
@@ -95,13 +102,45 @@ exports.fetch = function(req, res){
 				if(jqueryselector !== undefined) {
 					console.log('10:executing server jquery');
 					var queryresultnodes = [];
-					var jquerycall = 'jquery(html).'+jqueryselector+'.each(function(index,data){returnvalue.push(data);})';
-					var jqueryscript = vm.createScript(jquerycall, 'myjquery.vm');
-					jqueryscript.runInThisContext();
-					jquery.each(returnvalue,function(index,data){
-						queryresultnodes.push(xmlToJson(data));
+					/*TODO: validate improper jquery methods out + strip away .text() */
+					var jquerycall = 
+									'try {\
+										var _jqo = jquery(html).'+jqueryselector+'; \
+										/*check if user wants to force .text() instead of pushing domified data*/ \
+										if('+jqueryforcetext+' == true) { \
+											returnvalue.push(_jqo.text()); \
+										} else { \
+											_jqo.each(function(index,data){ \
+												returnvalue.push(data); \
+											}); \
+										} \
+									} catch(err) { jqerrorString = err; console.log(\'ERROR : internal jquery error from IP=\'+onerrorAddress+\' err=\',err,err.stack); } ';
+					/* Execute script in a domain and in own vm in this context */
+					var d = domain.create();
+					d.on('error', function(err){
+						/* handle the script load error safely */
+						console.log('ERROR : jquerycall error from IP='+onerrorAddress+' err=',err,err.stack);
+						res.jsonp({size : -1, results : 'error=[ '+err+' ] occured on executing selector=[ '+jqueryselector+' ]'});
 					});
-					res.jsonp({size : queryresultnodes.length, results : queryresultnodes});
+					d.run(function(){
+						var jqueryscript = vm.createScript(jquerycall, 'myjquery.vm');
+						jqueryscript.runInThisContext();
+					});
+					
+					/*If query was executed without errors, next process result into json compatible format*/
+					queryresultnodes = setQueryResultNodes(returnvalue,jqueryforcetext,jquery);
+					/*check if global jqerrorString is defined*/
+					if(jqerrorString !== null) {
+						res.jsonp({size : -1, results : 'error=[ '+jqerrorString+' ] occured on executing selector=[ '+jqueryselector+' ]'});
+					} 
+					else {
+						if(queryresultnodes.length === 0 && jqueryforcetext === false) {
+							res.jsonp({size : 0, results : 'no results, sorry. Have you tried already &forcetext=true which calls jquery.text() instead of returning result in DOMified format.'});
+						} 
+						else {
+							res.jsonp({size : queryresultnodes.length, results : queryresultnodes});
+						}
+					}
 				}
 				else {
 					res.jsonp({size : -1, results : 'no selector was given eg. &selector=find(\'a\').children()'});
@@ -111,7 +150,15 @@ exports.fetch = function(req, res){
 	});
 };
 
+function setQueryResultNodes(undomifiedvalue,forcedText,nodejquery) {
+	var queryResults = [];
+	if(forcedText == 'true') { /*remove extra array from queryResults*/ queryResults = null; queryResults = undomifiedvalue; }
+	else { nodejquery.each(undomifiedvalue,function(i,dat){queryResults.push(xmlToJson(dat));}) }
+	return queryResults;
+}
+
 /*Modified from https://gist.github.com/miohtama/1570295*/
+/*not used yet*/
 function parseHashArgs(aURL) {
  
 	/*aURL = aURL || window.location.href;*/
@@ -134,11 +181,8 @@ function parseHashArgs(aURL) {
 
 /*Modified from https://gist.github.com/hugeen/4662065 */
 function xmlToJson(xml) {
-	
 	/* Create the return object */
 	var obj = {};
- 
-	/* console.log(xml.nodeType, xml.nodeName ); */
 	
 	if (xml.nodeType == 1) { /* element */
 		/* do attributes */
