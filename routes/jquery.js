@@ -92,62 +92,70 @@ exports.fetch = function(req, res){
 		path: sitepath
 	};
 	/*TODO: use https and port 443 if specified*/
-	http.get(options, function(htmlresponse) {
-	    htmlresponse.setEncoding('binary');
-		htmlresponse.on('data', function(data) {
-			html += data;
-		}).on('end', function() {
-			/* webpage data has loaded */
-			setTimeout(function(){
-				if(jqueryselector !== undefined) {
-					console.log('10:executing server jquery');
-					var queryresultnodes = [];
-					/*TODO: validate improper jquery methods out + strip away .text() */
-					var jquerycall = 
-									'try {\
-										var _jqo = jquery(html).'+jqueryselector+'; \
-										/*check if user wants to force .text() instead of pushing domified data*/ \
-										if('+jqueryforcetext+' == true) { \
-											returnvalue.push(_jqo.text()); \
-										} else { \
-											_jqo.each(function(index,data){ \
-												returnvalue.push(data); \
-											}); \
-										} \
-									} catch(err) { jqerrorString = err; console.log(\'ERROR : internal jquery error from IP=\'+onerrorAddress+\' err=\',err,err.stack); } ';
-					/* Execute script in a domain and in own vm in this context */
-					var d = domain.create();
-					d.on('error', function(err){
-						/* handle the script load error safely */
-						console.log('ERROR : jquerycall error from IP='+onerrorAddress+' err=',err,err.stack);
-						res.jsonp({size : -1, results : 'error=[ '+err+' ] occured on executing selector=[ '+jqueryselector+' ]'});
-					});
-					d.run(function(){
-						var jqueryscript = vm.createScript(jquerycall, 'myjquery.vm');
-						jqueryscript.runInThisContext();
-					});
-					
-					/*If query was executed without errors, next process result into json compatible format*/
-					queryresultnodes = setQueryResultNodes(returnvalue,jqueryforcetext,jquery);
-					/*check if global jqerrorString is defined*/
-					if(jqerrorString !== null) {
-						res.jsonp({size : -1, results : 'error=[ '+jqerrorString+' ] occured on executing selector=[ '+jqueryselector+' ]'});
-					} 
-					else {
-						if(queryresultnodes.length === 0 && jqueryforcetext === false) {
-							res.jsonp({size : 0, results : 'no results, sorry. Have you tried already &forcetext=true which calls jquery.text() instead of returning result in DOMified format.'});
+	var remotegetdomain = domain.create();
+	remotegetdomain.on('error', function(err){
+		/* handle the ENOENT getaddrinfo / 404 load error safely */
+		console.log('ERROR : jquerycall error from IP='+onerrorAddress+' err=',err,err.stack);
+		res.jsonp({size : -1, results : 'could not reach site =[ '+sitehost+sitepath+' ]'});
+	});
+	remotegetdomain.run(function(){
+		http.get(options, function(htmlresponse) {
+			htmlresponse.setEncoding('binary');
+			htmlresponse.on('data', function(data) {
+				html += data;
+			}).on('end', function() {
+				/* webpage data has loaded */
+				setTimeout(function(){
+					if(jqueryselector !== undefined) {
+						console.log('10:executing server jquery');
+						var queryresultnodes = [];
+						/*TODO: validate improper jquery methods out + strip away .text() */
+						var jquerycall = 
+										'try {\
+											var _jqo = jquery(html).'+jqueryselector+'; \
+											/*check if user wants to force .text() instead of pushing domified data*/ \
+											if('+jqueryforcetext+' == true) { \
+												returnvalue.push(_jqo.text()); \
+											} else { \
+												_jqo.each(function(index,data){ \
+													returnvalue.push(data); \
+												}); \
+											} \
+										} catch(err) { jqerrorString = err; console.log(\'ERROR : internal jquery error from IP=\'+onerrorAddress+\' err=\',err,err.stack); } ';
+						/* Execute script in a domain and in own vm in this context */
+						var vmdomain = domain.create();
+						vmdomain.on('error', function(err){
+							/* handle the script load error safely */
+							console.log('ERROR : jquerycall error from IP='+onerrorAddress+' err=',err,err.stack);
+							res.jsonp({size : -1, results : 'error=[ '+err+' ] occured on executing selector=[ '+jqueryselector+' ]'});
+						});
+						vmdomain.run(function(){
+							var jqueryscript = vm.createScript(jquerycall, 'myjquery.vm');
+							jqueryscript.runInThisContext();
+						});
+						
+						/*If query was executed without errors, next process result into json compatible format*/
+						queryresultnodes = setQueryResultNodes(returnvalue,jqueryforcetext,jquery);
+						/*check if global jqerrorString is defined*/
+						if(jqerrorString !== null) {
+							res.jsonp({size : -1, results : 'error=[ '+jqerrorString+' ] occured on executing selector=[ '+jqueryselector+' ]'});
 						} 
 						else {
-							res.jsonp({size : queryresultnodes.length, results : queryresultnodes});
+							if(queryresultnodes.length === 0 && jqueryforcetext === false) {
+								res.jsonp({size : 0, results : 'no results, sorry. Have you tried already &forcetext=true which calls jquery.text() instead of returning result in DOMified format.'});
+							} 
+							else {
+								res.jsonp({size : queryresultnodes.length, results : queryresultnodes});
+							}
 						}
 					}
-				}
-				else {
-					res.jsonp({size : -1, results : 'no selector was given eg. &selector=find(\'a\').children()'});
-				}
-			}, 1);
-		});
-	});
+					else {
+						res.jsonp({size : -1, results : 'no selector was given eg. &selector=find(\'a\').children()'});
+					}
+				}, 1);/*setTimeout*/
+			});
+		});/*http.get*/
+	});/*domain run*/
 };
 
 function setQueryResultNodes(undomifiedvalue,forcedText,nodejquery) {
