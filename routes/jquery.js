@@ -5,7 +5,6 @@ var https = require('follow-redirects').https
 var sanitizer = require('sanitizer');
 var vm = require('vm');
 var domain = require('domain');
-
 /*
  * GET jquery 
  */
@@ -100,11 +99,12 @@ exports.fetch = function(req, res){
 	});
 	remotegetdomain.run(function(){
 		http.get(options, function(htmlresponse) {
-			htmlresponse.setEncoding('binary');
+		htmlresponse.setEncoding('binary');
 			htmlresponse.on('data', function(data) {
 				html += data;
 			}).on('end', function() {
 				/* webpage data has loaded */
+				html = tryCharsetDetection(html);
 				setTimeout(function(){
 					if(jqueryselector !== undefined) {
 						console.log('10:executing server jquery');
@@ -185,6 +185,18 @@ function parseHashArgs(aURL) {
     }
  
     return vars;
+}
+
+function tryCharsetDetection(htmldata) {
+	var charsetDetectDomain = domain.create();
+	charsetDetectDomain.on('error', function(err){console.log(err);});
+	return charsetDetectDomain.run(function(){
+		var iconv = require('iconv-lite');
+		try { var charsetDetector = require('node-icu-charset-detector'); } catch(error){return htmldata;};
+		var charset = charsetDetector.detectCharset(new Buffer(htmldata,'binary')).toString();
+		console.log('forced data to binary and decoding it, charset was=',charset);
+		return iconv.decode(htmldata,charset);
+	});
 }
 
 /*Modified from https://gist.github.com/hugeen/4662065 */
