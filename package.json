@@ -2,10 +2,9 @@
   "name": "apify",
   "subdomain": "apify",
   "domains": [
-    "pulljson.com",
-    "www.pulljson.com"
+    "pulljson.com"
   ],
-  "version": "0.0.1-34",
+  "version": "0.0.1-35",
   "private": true,
   "//description": "Pull jsonp data from any public site",
   "//keywords": [
@@ -15,7 +14,7 @@
   ],
   "//repository": {
     "//type": "git",
-    "//path": "git://github.com/apify/apify.git"
+    "//path": "git://github.com/santeriv/apify/apify.git"
   },
   "//homepage": "http://santeriv.github.io/apify",
   "//bugs": "http://github.com/santeriv/apify/issues",
@@ -33,16 +32,16 @@
     "start": "app.js"
   },
   "dependencies": {
-    "express": "3.1.x",
-    "hbs": "2.1.x",
+    "express": "3.4.x",
+    "hbs": "2.4.x",
     "less-middleware": "0.1.x",
     "jquery": "1.8.x",
     "follow-redirects": "0.0.x",
-    "sanitizer": "0.0.x",
+    "sanitizer": "0.1.x",
     "iconv-lite": "0.2.x",
     "node-icu-charset-detector": "0.0.x"
   },
   "engines": {
-    "node": "0.8.x"
+    "node": "0.10.x"
   }
 }
