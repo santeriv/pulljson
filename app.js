@@ -22,7 +22,10 @@ app.configure(function(){
   app.use(express.cookieParser('secrethere'));
   app.use(express.session());
   app.use(app.router);
-  app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
+  app.use(require('less-middleware')({
+	src: path.join(__dirname, 'public'),
+    compress: true	
+	}));
   app.use(express.static(path.join(__dirname, 'public')));
 });
 

@@ -11,7 +11,6 @@ var domain = require('domain');
 
 exports.fetch = function(req, res){
 	html = '';
-	onerrorAddress = req.connection.remoteAddress;
 	jqerrorString = null;
 	returnvalue = [];
 	jqueryselector = '';
@@ -94,7 +93,7 @@ exports.fetch = function(req, res){
 	var remotegetdomain = domain.create();
 	remotegetdomain.on('error', function(err){
 		/* handle the ENOENT getaddrinfo / 404 load error safely */
-		console.log('ERROR : jquerycall error from IP='+onerrorAddress+' err=',err,err.stack);
+		console.log('ERROR : jquerycall error=',err,err.stack);
 		res.jsonp({size : -1, results : 'could not reach site =[ '+sitehost+sitepath+' ]'});
 	});
 	remotegetdomain.run(function(){
@@ -121,12 +120,12 @@ exports.fetch = function(req, res){
 													returnvalue.push(data); \
 												}); \
 											} \
-										} catch(err) { jqerrorString = err; console.log(\'ERROR : internal jquery error from IP=\'+onerrorAddress+\' err=\',err,err.stack); } ';
+										} catch(err) { jqerrorString = err; console.log(\'ERROR : internal jquery error=\',err,err.stack); } ';
 						/* Execute script in a domain and in own vm in this context */
 						var vmdomain = domain.create();
 						vmdomain.on('error', function(err){
 							/* handle the script load error safely */
-							console.log('ERROR : jquerycall error from IP='+onerrorAddress+' err=',err,err.stack);
+							console.log('ERROR : jquerycall error=',err,err.stack);
 							res.jsonp({size : -1, results : 'error=[ '+err+' ] occured on executing selector=[ '+jqueryselector+' ]'});
 						});
 						vmdomain.run(function(){
@@ -163,28 +162,6 @@ function setQueryResultNodes(undomifiedvalue,forcedText,nodejquery) {
 	if(forcedText == 'true') { /*remove extra array from queryResults*/ queryResults = null; queryResults = undomifiedvalue; }
 	else { nodejquery.each(undomifiedvalue,function(i,dat){queryResults.push(xmlToJson(dat));}) }
 	return queryResults;
-}
-
-/*Modified from https://gist.github.com/miohtama/1570295*/
-/*not used yet*/
-function parseHashArgs(aURL) {
- 
-	/*aURL = aURL || window.location.href;*/
-	
-	var vars = {};
-	var hashes = aURL.slice(aURL.indexOf('#') + 1).split('&');
- 
-    for(var i = 0; i < hashes.length; i++) {
-       var hash = hashes[i].split('=');
-      
-       if(hash.length > 1) {
-    	   vars[hash[0]] = hash[1];
-       } else {
-     	  vars[hash[0]] = null;
-       }      
-    }
- 
-    return vars;
 }
 
 function tryCharsetDetection(htmldata) {
