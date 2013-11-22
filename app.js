@@ -17,15 +17,15 @@ app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'hbs');
   app.use(express.logger('dev'));
-  app.use(express.bodyParser());
+  app.use(express.json());
+  app.use(express.urlencoded());
   app.use(express.methodOverride());
-  app.use(express.cookieParser('secrethere'));
-  app.use(express.session());
+  app.use(express.cookieParser('apifythyself'));
+  app.use(express.cookieSession({
+	key: 'apify.session'
+  }));
   app.use(app.router);
-  app.use(require('less-middleware')({
-	src: path.join(__dirname, 'public'),
-    compress: true	
-	}));
+  app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
   app.use(express.static(path.join(__dirname, 'public')));
 });
 
