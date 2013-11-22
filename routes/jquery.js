@@ -10,6 +10,7 @@ var domain = require('domain');
  */
 
 exports.fetch = function(req, res){
+    res.header("Access-Control-Allow-Origin", "*");
 	html = '';
 	jqerrorString = null;
 	returnvalue = [];
