@@ -5,10 +5,72 @@ var https = require('follow-redirects').https
 var sanitizer = require('sanitizer');
 var vm = require('vm');
 var domain = require('domain');
+portscanner = require('portscanner');
+
+exports.snapshot = function(req,res) {
+	var queryParams = url.parse(req.url,true).query;
+	if(queryParams === undefined || queryParams.site === undefined || queryParams.site == null){
+		res.redirect('/');
+	}
+	var snapshoturl = url.parse(queryParams.site,true).href;
+	Object.keys(queryParams).forEach(function(param) {
+	    /*cast property to string*/
+		var paramstr = ''+param;
+		if(paramstr !== 'site' 
+			&& paramstr !== 'callback'
+			&& paramstr !== '_') {
+			/*param,value*/
+			var pair='&'+paramstr+'='+queryParams[param];
+			/*add param and value to sitepath*/
+			snapshoturl = snapshoturl + pair;
+		}
+	});	
+	takesnapshot(snapshoturl,res);
+}
+	
+function takesnapshot(snapshoturl,response) {
+	var phantomdomain = domain.create();
+	phantomdomain.on('error', function(phantomreturn){
+		console.log('phantom executed=>');
+		response.jsonp({size : phantomreturn.message.length, status: phantomreturn.status, url: snapshoturl, snapshot: phantomreturn.message });
+	});
+	phantomdomain.run(function(){
+		phantom = require('phantom');
+		var phantomjscall = 
+			'\n\
+			function PhantomReturn(status,datauri) {\n\
+			  this.name = "PhantomReturn";\n\
+			  this.status = status || "failed";\n\
+			  this.message = datauri || "data not set";\n\
+			}\n\
+			PhantomReturn.prototype = new Error();\n\
+			PhantomReturn.prototype.constructor = PhantomReturn;\n\
+			portscanner.findAPortNotInUse(40000, 60000, "localhost", function(err, freeport) {\n\
+				phantom.create({"port": freeport},function(ph) {\n\
+					ph.createPage(function(page){\n\
+						page.set("onLoadFinished",function(status) { \n\
+							console.log("phantom load finished status=",status);\n\
+							try {\n\
+								page.renderBase64("PNG",function(data){\n\
+									var phantomdatauri = "data:image/png;base64,";\n\
+									phantomdatauri += data;\n\
+									ph.exit();throw new PhantomReturn(status,phantomdatauri);});\n\
+							}catch(e){/*ignore error*/ console.log("error=",e);}\n\
+						});\n\
+						page.open("'+snapshoturl+'", function(status) { console.log("phantom load status=",status); /*ignore status handling*/});\n\
+					});\n\
+				});\n\
+			});\n';
+		console.log('executing phantom script=',phantomjscall);
+		var phantomjsscript = vm.createScript(phantomjscall, 'myphantomjs.vm');
+		phantomjsscript.runInThisContext();
+	});
+}
+
 /*
  * GET jquery 
  */
-
+ 
 exports.fetch = function(req, res){
     res.header("Access-Control-Allow-Origin", "*");
 	html = '';
@@ -90,6 +152,9 @@ exports.fetch = function(req, res){
 		port: 80,
 		path: sitepath
 	};
+	
+	takesnapshot(sitehost+sitepath,res);
+	
 	/*TODO: use https and port 443 if specified*/
 	var remotegetdomain = domain.create();
 	remotegetdomain.on('error', function(err){
