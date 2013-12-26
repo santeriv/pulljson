@@ -5,6 +5,8 @@ var https = require('follow-redirects').https
 var sanitizer = require('sanitizer');
 var vm = require('vm');
 var domain = require('domain');
+var os = require('os');
+var phantomjsbin = /*os.platform() === 'sunos' ? __dirname+'/../bin/sunos_64/phantomjs' : */'phantomjs';
 portscanner = require('portscanner');
 
 exports.snapshot = function(req,res) {
@@ -24,7 +26,7 @@ exports.snapshot = function(req,res) {
 			/*add param and value to sitepath*/
 			snapshoturl = snapshoturl + pair;
 		}
-	});	
+	});
 	takesnapshot(snapshoturl,res);
 }
 	
@@ -46,7 +48,7 @@ function takesnapshot(snapshoturl,response) {
 			PhantomReturn.prototype = new Error();\n\
 			PhantomReturn.prototype.constructor = PhantomReturn;\n\
 			portscanner.findAPortNotInUse(40000, 60000, "localhost", function(err, freeport) {\n\
-				phantom.create({"port": freeport},function(ph) {\n\
+				phantom.create({"binary":"'+phantomjsbin+'","port": freeport},function(ph) {\n\
 					ph.createPage(function(page){\n\
 						page.set("onLoadFinished",function(status) { \n\
 							console.log("phantom load finished status=",status);\n\
