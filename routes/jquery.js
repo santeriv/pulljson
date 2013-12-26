@@ -153,8 +153,6 @@ exports.fetch = function(req, res){
 		path: sitepath
 	};
 	
-	takesnapshot(sitehost+sitepath,res);
-	
 	/*TODO: use https and port 443 if specified*/
 	var remotegetdomain = domain.create();
 	remotegetdomain.on('error', function(err){
