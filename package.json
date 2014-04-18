@@ -39,7 +39,7 @@
     "follow-redirects": "0.0.x",
     "sanitizer": "0.1.x",
     "iconv-lite": "0.2.x",
-    "node-icu-charset-detector": "0.0.x",
+    "node-icu-charset-detector": "git://github.com/santeriv/node-icu-charset-detector.git#master",
     "portscanner": "0.x.x",
     "phantom": "0.x.x",
 	"express-bunyan-logger": "0.x.x"
