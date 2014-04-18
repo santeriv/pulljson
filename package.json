@@ -4,7 +4,7 @@
   "domains": [
     "pulljson.com"
   ],
-  "version": "0.0.1-55",
+  "version": "0.0.1-56",
   "private": true,
   "//description": "Pull jsonp data from any public site",
   "//keywords": [
@@ -41,7 +41,8 @@
     "iconv-lite": "0.2.x",
     "node-icu-charset-detector": "0.0.x",
     "portscanner": "0.x.x",
-    "phantom": "0.x.x"
+    "phantom": "0.x.x",
+	"express-bunyan-logger": "0.x.x"
   },
   "engines": {
     "node": "0.10.x"
