@@ -1,3 +1,6 @@
+pulljson
+========
+
 # pull json data from anywhere
 
 hosted at pulljson.com
@@ -6,9 +9,9 @@ A simple json data parser utilizing jquery on remote page
 
 ## Installation
 
-install `apify` from npm.
+install `pulljson` from npm.
 
-    npm install apify
+    npm install pulljson
 
 ## Usage
 

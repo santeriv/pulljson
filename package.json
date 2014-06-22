@@ -6,24 +6,24 @@
   ],
   "version": "0.0.1-56",
   "private": true,
-  "//description": "Pull jsonp data from any public site",
-  "//keywords": [
+  "description": "Pull jsonp data from any public site",
+  "keywords": [
     "pull json",
     "jsonp service",
     "mobile jsonp service"
   ],
-  "//repository": {
-    "//type": "git",
-    "//path": "git://github.com/santeriv/apify/apify.git"
+  "repository": {
+    "type": "git",
+    "path": "git://github.com/santeriv/pulljson/pulljson.git"
   },
-  "//homepage": "http://santeriv.github.io/apify",
-  "//bugs": "http://github.com/santeriv/apify/issues",
-  "//author": {
-    "//name": "Santeri Vesalainen",
-    "//email": "santeri.vesalainen@gmail.com",
-    "//web": "http://santeriv.github.com/"
+  "homepage": "http://santeriv.github.io/pulljson",
+  "bugs": "http://github.com/santeriv/pulljson/issues",
+  "author": {
+    "name": "Santeri Vesalainen",
+    "email": "santeri.vesalainen@gmail.com",
+    "web": "http://santeriv.github.com/"
   },
-  "//licenses": [
+  "licenses": [
     {
       "type": "MIT"
     }
