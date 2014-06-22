@@ -1,11 +1,11 @@
 {
-  "name": "apify",
-  "subdomain": "apify",
+  "name": "pulljson",
+  "subdomain": "",
   "domains": [
     "pulljson.com"
   ],
   "version": "0.0.1-56",
-  "private": true,
+  "private": false,
   "description": "Pull jsonp data from any public site",
   "keywords": [
     "pull json",
@@ -29,7 +29,7 @@
     }
   ],
   "scripts": {
-    "start": "app.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "express": "3.4.x",
@@ -44,6 +44,11 @@
     "phantom": "0.x.x",
 	"express-bunyan-logger": "0.x.x"
   },
+  "devDependencies": {
+    "mocha": "*",
+    "chai": "*",
+    "supertest": "*"
+    },
   "engines": {
     "node": "0.10.x"
   }
