@@ -21,7 +21,7 @@ run app.js
 
 	node app.js 
 	
-go to localhost:3000/jquery?site=jquery.com&selector=find('h2')&forceText=true&callback=myCallbackFunc
+go to localhost:3000/jquery?site=jquery.com&selector=find('h2')&forceText=true&callback=myCallbackFunction
 
 ```javascript
 console.log("todo snippet here");
