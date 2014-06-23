@@ -1,6 +1,9 @@
 pulljson
 ========
 
+![Travis CI pulljson status](https://travis-ci.org/santeriv/pulljson.svg?branch=master "pulljson - master")
+
+
 # pull json data from anywhere
 
 hosted at pulljson.com
