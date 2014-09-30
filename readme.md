@@ -9,6 +9,8 @@ hosted at pulljson.com
 
 A simple json data parser utilizing jquery on remote page
 
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
 ## Installation
 
 install `pulljson` from npm.
