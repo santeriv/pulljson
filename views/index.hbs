@@ -7,13 +7,13 @@
 	</div>
 	<h3>Example queries which returns valid jsonp:</h3>
 	<pre>http://www.pulljson.com/jquery?site=jquery.com&selector=find('a').children()&callback=myjsonpcallback</pre>
-	<h3>Usage example of API</h3>
+	<h3>JSONP example</h3>
 	<pre>
 	$('#demo-output').show();
 	$.ajax(
 	{
 		dataType:'jsonp',
-		url:"http://www.pulljson.com/jquery?site=www.jquery.com&selector=find('a img')&callback=?",
+		url:"http://pulljson.com/jquery?site=www.jquery.com&selector=find('a img')&callback=?",
 		success:function(data) {
 			var items = [];
 			/*Puts into list found linksimages' alt text from jquery.com site*/
@@ -30,6 +30,30 @@
 	});
 	</pre>
 	<input type="button" id="examplerun1" value="Run above example!"/>
+	<h3>CORS example</h3>
+	<pre>
+	$('#demo-output').show();
+	$.ajax(
+	{
+		dataType:'json',
+		crossDomain: true,
+		url:"http://pulljson.com/jquery?site=www.jquery.com&selector=find('a img')&callback=?",
+		success:function(data) {
+			var items = [];
+			/*Puts into list found linksimages' alt text from jquery.com site*/
+			$.each(data.results, function(key, val) {
+				/* val.text refers to content of tags */
+				items.push('&lt;li id="' + key + '"&gt;' + val.attributes.alt + '&lt;/li&gt;');
+			});
+			$('&lt;ul/&gt;', {
+				'class': 'my-new-list',
+				html: items.join('')
+			}).appendTo('#demo-output');
+			$('#demo-output-loader').hide();
+		}
+	});
+	</pre>
+	<input type="button" id="examplerun2" value="Run above example!"/>
 	<div id="demo-output" class="well" style="display:none">
 		<div id="demo-output-loader">
 			<i class="icon-spinner icon-spin"></i>Loading results
