@@ -6,11 +6,11 @@
 exports.index = function(req, res){
   res.render('index',
 	{
-		"title": "pull json everywhere = jsonp",
+		"title": "pull html data in json from a webpage",
 		"queryexamples": [
 			{
 			"description":"Find links from finnkino",
-			"query": "http://www.pulljson.com/jquery?site=www.finnkino.fi&selector=find('a')&callback=mySpecialCallback1"
+			"query": "http://pulljson.com/jquery?site=www.finnkino.fi&selector=find('a')&callback=mySpecialCallback1"
 			}
 		],
 		"contactdetails": [
