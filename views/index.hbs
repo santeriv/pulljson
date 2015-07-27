@@ -9,7 +9,7 @@
 	<pre>http://www.pulljson.com/jquery?site=jquery.com&selector=find('a').children()&callback=myjsonpcallback</pre>
 	<h3>JSONP example</h3>
 	<pre>
-	$('#demo-output').show();
+	$('#demo-output-jsonp').show();
 	$.ajax(
 	{
 		dataType:'jsonp',
@@ -24,15 +24,21 @@
 			$('&lt;ul/&gt;', {
 				'class': 'my-new-list',
 				html: items.join('')
-			}).appendTo('#demo-output');
-			$('#demo-output-loader').hide();
+			}).appendTo('#demo-output-jsonp');
+			$('#demo-output-loader-jsonp').hide();
 		}
 	});
 	</pre>
-	<input type="button" id="examplerun1" value="Run above example!"/>
+	<input type="button" id="examplerun-jsonp" value="Run above example!"/>
+	<div id="demo-output-jsonp" class="well" style="display:none">
+		<div id="demo-output-loader-jsonp">
+			<i class="icon-spinner icon-spin"></i>Loading results
+		</div>
+		<br />
+	</div>
 	<h3>CORS example</h3>
 	<pre>
-	$('#demo-output').show();
+	$('#demo-output-cors').show();
 	$.ajax(
 	{
 		dataType:'json',
@@ -48,14 +54,14 @@
 			$('&lt;ul/&gt;', {
 				'class': 'my-new-list',
 				html: items.join('')
-			}).appendTo('#demo-output');
-			$('#demo-output-loader').hide();
+			}).appendTo('#demo-output-cors');
+			$('#demo-output-loader-cors').hide();
 		}
 	});
 	</pre>
-	<input type="button" id="examplerun2" value="Run above example!"/>
-	<div id="demo-output" class="well" style="display:none">
-		<div id="demo-output-loader">
+	<input type="button" id="examplerun-cors" value="Run above example!"/>
+	<div id="demo-output-cors" class="well" style="display:none">
+		<div id="demo-output-loader-cors">
 			<i class="icon-spinner icon-spin"></i>Loading results
 		</div>
 		<br />
