@@ -77,8 +77,7 @@
 	<script>
 	$(document).ready(function(){
 		$('#examplerun1').click(function(){
-		$('#demo-output').empty();
-		$('#demo-output').show();
+		$('#demo-output-jsonp').show();
 		$(this).attr('disabled','disabled');
 			$.ajax(
 			{
@@ -94,14 +93,13 @@
 					  $('<ul/>', {
 						'class': 'my-new-list',
 						html: items.join('')
-					  }).appendTo('#demo-output');
-					  $('#demo-output-loader').hide();
+					  }).appendTo('#demo-output-jsonp');
+					  $('#demo-output-loader-jsonp').hide();
 				}
 			});
 		});
-		$('#examplerun2').click(function(){
-		$('#demo-output').empty();
-		$('#demo-output').show();
+		$('#examplerun-cors').click(function(){
+		$('#demo-output-cors').show();
 		$(this).attr('disabled','disabled');
 			$.ajax(
 			{
@@ -118,8 +116,8 @@
 					  $('<ul/>', {
 						'class': 'my-new-list',
 						html: items.join('')
-					  }).appendTo('#demo-output');
-					  $('#demo-output-loader').hide();
+					  }).appendTo('#demo-output-cors');
+					  $('#demo-output-loader-cors').hide();
 				}
 			});
 		});
