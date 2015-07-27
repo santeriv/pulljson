@@ -77,12 +77,37 @@
 	<script>
 	$(document).ready(function(){
 		$('#examplerun1').click(function(){
+		$('#demo-output').empty();
 		$('#demo-output').show();
 		$(this).attr('disabled','disabled');
 			$.ajax(
 			{
 				dataType:'jsonp',
-				url:"http://www.pulljson.com/jquery?site=www.jquery.com&selector=find('a img')&callback=?",
+				url:"http://pulljson.com/jquery?site=www.jquery.com&selector=find('a img')&callback=?",
+				success:function(data) {
+					var items = [];
+					 
+					  $.each(data.results, function(key, val) {
+						items.push('<li id="' + key + '">' + val.attributes.alt + '</li>');
+					  });
+					 
+					  $('<ul/>', {
+						'class': 'my-new-list',
+						html: items.join('')
+					  }).appendTo('#demo-output');
+					  $('#demo-output-loader').hide();
+				}
+			});
+		});
+		$('#examplerun2').click(function(){
+		$('#demo-output').empty();
+		$('#demo-output').show();
+		$(this).attr('disabled','disabled');
+			$.ajax(
+			{
+				dataType:'json',
+				crossDomain:true,
+				url:"http://pulljson.com/jquery?site=www.jquery.com&selector=find('a img')&callback=?",
 				success:function(data) {
 					var items = [];
 					 
