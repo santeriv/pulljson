@@ -65,8 +65,8 @@ if(environment === 'production') {
   var certificate = fs.readFileSync( path.join(__dirname, 'sslforfree/certificate.crt') );
   https.createServer(
     {
-      ca: certificate_authority,
-      cert: certificate,
+      ca: certificate_authority.toString(),
+      cert: certificate.toString(),
       key: process.env.FREESSL_PRIVATE_KEY || ''
     },app)
     .listen(app.get('https port'), function(){
