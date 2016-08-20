@@ -48,8 +48,8 @@ http.createServer(app).listen(app.get('port'), function(){
   console.log("Http Express server listening on port " + app.get('port'));
 });
 
-var certificate_authority = fs.readFileSync( 'sslforfree/ca-bundle.crt' ).toString();
-var certificate = fs.readFileSync( 'sslforfree/certificate.crt' ).toString();
+var certificate_authority = fs.readFileSync( path.join(__dirname, 'sslforfree/ca-bundle.crt') ).toString();
+var certificate = fs.readFileSync( path.join(__dirname, 'sslforfree/certificate.crt') ).toString();
 var sslPrivateKey = process.env.FREESSL_PRIVATE_KEY || '';
 var options = {ca: certificate_authority, cert: certificate, key: sslPrivateKey};
 
