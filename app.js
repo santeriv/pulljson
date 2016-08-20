@@ -12,17 +12,20 @@ var express = require('express')
   , fs = require('fs')
   , path = require('path');
 
-var httpPort = process.env.PORT || 3000;
-var httpsPort = process.env.HTTPS_PORT || httpPort + 1;
 var environment = process.env.NODE_ENV || 'development';
+var httpPort = process.env.PORT || 3000;
+var httpsPort = process.env.HTTPS_PORT || process.env.PORT || 3443;
 var app = express();
 
 app.configure('production', function(){
   app.enable('trust proxy');//for https which is set to X-Forwarded-Proto request header by Heroku
+  app.set('https port', httpsPort);
+});
+app.configure('development', function(){
+  /*app.use(express.errorHandler());*/
+  app.set('port', httpPort);
 });
 app.configure(function(){
-  app.set('port', httpPort);
-  app.set('https port', httpsPort);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'hbs');
   app.use(express.logger('dev'));
@@ -38,11 +41,6 @@ app.configure(function(){
   app.use(express.static(path.join(__dirname, 'public')));
   app.use(require('express-bunyan-logger').errorLogger());
 });
-/*
-app.configure('development', function(){
-  app.use(express.errorHandler());
-});
-*/
 app.get('/', routes.index);
 app.get('/jquery', jquery.fetch);
 app.get('/snapshot', jquery.snapshot);
@@ -56,9 +54,13 @@ if(environment === 'development') {
 if(environment === 'production') {
   var certificate_authority = fs.readFileSync( path.join(__dirname, 'sslforfree/ca_bundle.crt') );
   var certificate = fs.readFileSync( path.join(__dirname, 'sslforfree/certificate.crt') );
-  var sslPrivateKey = process.env.FREESSL_PRIVATE_KEY || '';
-  var options = {ca: certificate_authority, cert: certificate, key: sslPrivateKey};
-  https.createServer(options, app).listen(app.get('https port'), function(){
-    console.log("Https Express server listening on port " + app.get('https port'));
+  https.createServer(
+    {
+      ca: certificate_authority,
+      cert: certificate,
+      key: process.env.FREESSL_PRIVATE_KEY || ''
+    },app)
+    .listen(app.get('https port'), function(){
+      console.log("Https Express server listening on port " + app.get('https port'));
   });
 }
