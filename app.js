@@ -27,6 +27,7 @@ app.configure('production', function(){
     else {
       return next();
     }
+  });
 });
 app.configure('development', function(){
   /*app.use(express.errorHandler());*/
