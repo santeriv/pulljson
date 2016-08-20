@@ -14,11 +14,15 @@ var express = require('express')
 
 var httpPort = process.env.PORT || 3000;
 var httpsPort = process.env.HTTPS_PORT || httpPort + 1;
+var environment = process.env.NODE_ENV || 'development';
 var app = express();
+
+app.configure('production', function(){
+  app.enable('trust proxy');//for https which is set to X-Forwarded-Proto request header by Heroku
+});
 app.configure(function(){
   app.set('port', httpPort);
   app.set('https port', httpsPort);
-  app.enable('trust proxy');//for https which is set to X-Forwarded-Proto request header by Heroku
   app.set('views', __dirname + '/views');
   app.set('view engine', 'hbs');
   app.use(express.logger('dev'));
@@ -43,16 +47,18 @@ app.get('/', routes.index);
 app.get('/jquery', jquery.fetch);
 app.get('/snapshot', jquery.snapshot);
 
-//TODO check if ssl configured and force? to https
-http.createServer(app).listen(app.get('port'), function(){
-  console.log("Http Express server listening on port " + app.get('port'));
-});
+if(environment === 'development') {
+  http.createServer(app).listen(app.get('port'), function(){
+    console.log("Http Express server listening on port " + app.get('port'));
+  });
+}
 
-var certificate_authority = fs.readFileSync( path.join(__dirname, 'sslforfree/ca_bundle.crt') ).toString();
-var certificate = fs.readFileSync( path.join(__dirname, 'sslforfree/certificate.crt') ).toString();
-var sslPrivateKey = process.env.FREESSL_PRIVATE_KEY || '';
-var options = {ca: certificate_authority, cert: certificate, key: sslPrivateKey};
-
-https.createServer(options, app).listen(app.get('https port'), function(){
-  console.log("Https Express server listening on port " + app.get('https port'));
-});
+if(environment === 'production') {
+  var certificate_authority = fs.readFileSync( path.join(__dirname, 'sslforfree/ca_bundle.crt') );
+  var certificate = fs.readFileSync( path.join(__dirname, 'sslforfree/certificate.crt') );
+  var sslPrivateKey = process.env.FREESSL_PRIVATE_KEY || '';
+  var options = {ca: certificate_authority, cert: certificate, key: sslPrivateKey};
+  https.createServer(options, app).listen(app.get('https port'), function(){
+    console.log("Https Express server listening on port " + app.get('https port'));
+  });
+}
