@@ -9,6 +9,7 @@ var express = require('express')
   , jquery = require('./routes/jquery')
   , http = require('http')
   , https = require('https')
+  , fs = require('fs')
   , path = require('path');
 
 var httpPort = process.env.PORT || 3000;
