@@ -20,6 +20,13 @@ var app = express();
 app.configure('production', function(){
   app.enable('trust proxy');//for https which is set to X-Forwarded-Proto request header by Heroku
   app.set('https port', httpsPort);
+  app.use(function(req, res, next) {
+    if (req.headers['x-forwarded-proto'] != 'https') {
+      res.redirect('https://' + req.headers.host + req.path);
+    }
+    else {
+      return next();
+    });
 });
 app.configure('development', function(){
   /*app.use(express.errorHandler());*/
