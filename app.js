@@ -22,6 +22,7 @@ app.configure('production', function(){
   app.set('https port', httpsPort);
   app.use(function(req, res, next) {
     if (req.headers['x-forwarded-proto'] != 'https') {
+      console.log('Redirecting to https from host=',req.headers.host);	
       res.redirect('https://' + req.headers.host + req.path);
     }
     else {
