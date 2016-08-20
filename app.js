@@ -8,12 +8,16 @@ var express = require('express')
   , user = require('./routes/user')
   , jquery = require('./routes/jquery')
   , http = require('http')
+  , https = require('https')
   , path = require('path');
 
+var httpPort = process.env.PORT || 3000;
+var httpsPort = process.env.HTTPS_PORT || httpPort + 1;
 var app = express();
-
 app.configure(function(){
-  app.set('port', process.env.PORT || 3000);
+  app.set('port', httpPort);
+  app.set('https port', httpsPort);
+  app.enable('trust proxy');//for https which is set to X-Forwarded-Proto request header by Heroku
   app.set('views', __dirname + '/views');
   app.set('view engine', 'hbs');
   app.use(express.logger('dev'));
@@ -38,7 +42,16 @@ app.get('/', routes.index);
 app.get('/jquery', jquery.fetch);
 app.get('/snapshot', jquery.snapshot);
 
-
+//TODO check if ssl configured and force? to https
 http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
+  console.log("Http Express server listening on port " + app.get('port'));
+});
+
+var certificate_authority = fs.readFileSync( 'freessl/ca-bundle.crt' ).toString();
+var certificate = fs.readFileSync( 'freessl/certificate.crt' ).toString();
+var sslPrivateKey = process.env.FREESSL_PRIVATE_KEY || '';
+var options = {ca: certificate_authority, cert: certificate, key: sslPrivateKey};
+
+https.createServer(options, app).listen(app.get('https port'), function(){
+  console.log("Https Express server listening on port " + app.get('https port'));
 });
