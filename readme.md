@@ -35,4 +35,4 @@ console.log("todo snippet here");
 
 - id jquery hash-selector does not work &find('div#myid') try &find('div[id="myid"]') instead
 
-#Contributers
+### Contibuters
