@@ -23,8 +23,8 @@ install `pulljson` from npm.
 
 run app.js
 
-	node app.js 
-	
+	node app.js
+
 go to localhost:3000/jquery?site=jquery.com&selector=find('h2')&forceText=true&callback=myCallbackFunction
 
 ```javascript
@@ -34,3 +34,15 @@ console.log("todo snippet here");
 ### Known issues
 
 - id jquery hash-selector does not work &find('div#myid') try &find('div[id="myid"]') instead
+
+
+### Contributors
+
+- [Santeri Vesalainen](https://github.com/santeriv)
+
+### Contributor avatars
+<a href="https://github.com/santeriv/pulljson/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=santeriv/pulljson" />
+</a>
+
+Made with [contributors-img](https://contributors-img.web.app).
