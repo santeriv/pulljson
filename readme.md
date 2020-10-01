@@ -5,7 +5,7 @@ pulljson
 
 # pull json data from anywhere
 
-hosted at pulljson.com
+hosted at pulljson.com or https://html-to-json.herokuapp.com/
 
 A simple json data parser utilizing jquery on remote page
 
