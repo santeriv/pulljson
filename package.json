@@ -4,7 +4,7 @@
   "domains": [
     "pulljson.com"
   ],
-  "version": "0.0.1-56",
+  "version": "0.0.1-57",
   "private": false,
   "description": "Pull jsonp data from any public site",
   "keywords": [
