@@ -9,7 +9,7 @@ hosted at pulljson.com or https://html-to-json.herokuapp.com/
 
 A simple json data parser utilizing jquery on remote page
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy/?template=https://github.com/santeriv/pulljson)
 
 ## Installation
 
